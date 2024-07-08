@@ -3,7 +3,7 @@
 #define SIZE 4
 
 int main(int argc, char *argv[])  {
-    int numtasks, rank, source=0, dest, tag=1, i;
+    int numtasks, rank, source=0, dest, tag=1, i, mpiret;
     float a[SIZE][SIZE] =
         { 1.0, 2.0, 3.0, 4.0,
           5.0, 6.0, 7.0, 8.0,
@@ -39,8 +39,18 @@ int main(int argc, char *argv[])  {
      *           new datatype (handle)
      */
     // TODO: create the contiguous data type
+    mpiret = MPI_Type_contiguous(4, MPI_FLOAT, &rowtype);
+    if (mpiret != MPI_SUCCESS) {
+        printf("Contigeous type creation failed!");
+        return mpiret;
+    }
 
     // TODO: commit the new derived datatype 
+    mpiret = MPI_Type_commit(&rowtype);
+    if (mpiret != MPI_SUCCESS) {
+        printf("Contigeous type commit failed!");
+        return mpiret;
+    }
 
     /* ===================================================================== */
     
@@ -76,7 +86,18 @@ int main(int argc, char *argv[])  {
               */
             for (i=0; i<numtasks; i++) {
                 // TODO: send each ROW i of the array 'a' using the derived data type.
-                
+                mpiret = MPI_Send(
+                    &a[i][0],
+                    1,
+                    rowtype,
+                    i,
+                    tag,
+                    MPI_COMM_WORLD
+                );
+                if (mpiret != MPI_SUCCESS) {
+                    printf("MPI_Send of contiguous failed!");
+                    return mpiret;
+                }
             }
             /* =================================================================== */
         }
