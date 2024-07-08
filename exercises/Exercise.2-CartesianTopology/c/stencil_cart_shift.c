@@ -120,12 +120,18 @@ int main(int argc, char **argv)
      *           communicator with new cartesian topology (handle)
      */
     // TODO: get a new cartesian communicator (comm_cart)
-    int dim = //TODO;
-    int dims[] = //TODO;
-    int periods[] = //TODO;
-    int reorder = //TODO;
+    int dim = 2;
+    int dims[] = {px, py};
+    int periods[] = {false, false};
+    int reorder = 0;
     MPI_Comm comm_cart;
+
     //TODO: create comm_cart communicator
+    int mpiret = MPI_Cart_create(MPI_COMM_WORLD, dim, dims, periods, reorder, &comm_cart);
+    if (mpiret != MPI_SUCCESS) {
+        printf("MPI_Cart_create failed!");
+        return mpiret;
+    }
     /* ======================================================================================= */
 
     /* ======================================================================================= */
@@ -153,6 +159,17 @@ int main(int argc, char **argv)
      *           rank of destination process (integer)
      */
     // TODO: set west,east,south,north using MPI_Cart_shift
+    mpiret = MPI_Cart_shift(comm_cart, 1, 1, &north, &south);
+    if (mpiret != MPI_SUCCESS) {
+        printf("MPI_Cart_shift north -> south failed!");
+        return mpiret;
+    }
+
+    mpiret = MPI_Cart_shift(comm_cart, 0, 1, &west, &east);
+    if (mpiret != MPI_SUCCESS) {
+        printf("MPI_Cart_shift west -> east failed!");
+        return mpiret;
+    }
 
     /* ======================================================================================= */
 
@@ -178,10 +195,15 @@ int main(int argc, char **argv)
      */
     int coords[2];
     // TODO: get 'coords'
-    
+    mpiret = MPI_Cart_coords(comm_cart, rank, 2, coords);
+    if (mpiret != MPI_SUCCESS) {
+        printf("MPI_Cart_coords failed!");
+        return mpiret;
+    }
+
     // TODO: set rx,ry from 'coords'
-    rx = //TODO;
-    ry = //TODO;
+    rx = coords[0];
+    ry = coords[1];
     /* ======================================================================================= */
 
     /* decompose the domain */

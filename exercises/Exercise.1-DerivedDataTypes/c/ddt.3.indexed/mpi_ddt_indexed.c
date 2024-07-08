@@ -3,7 +3,7 @@
 #define NELEMENTS 6
 
 int main(int argc, char *argv[])  {
-    int numtasks, rank, source=0, dest, tag=1, i;
+    int numtasks, rank, source=0, dest, tag=1, i, mpiret;
     int blocklengths[2], displacements[2];
     float a[16] = 
             {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 
@@ -45,16 +45,32 @@ int main(int argc, char *argv[])  {
      */
     // NOTE: We want the the resulting values of b[] to be {6.0 7.0 8.0 9.0 13.0 14.0}.
     // TODO: fill in the values for blocklengths
-    blocklengths[0] = //TODO ;
-    blocklengths[1] = //TODO ;
+    blocklengths[0] = 4; //TODO
+    blocklengths[1] = 3; //TODO
 
     // TODO: fill in the values for the displacements
-    displacements[0] = //TODO ;
-    displacements[1] = //TODO ;
+    displacements[0] = 5; //TODO
+    displacements[1] = 12; //TODO
     
     // TODO: create the indexed data type
+    mpiret = MPI_Type_indexed(
+        2,
+        blocklengths,
+        displacements,
+        MPI_FLOAT, 
+        &indextype
+    );
+    if (mpiret != MPI_SUCCESS) {
+        printf("Index type creation failed!");
+        return mpiret;
+    }
 
     // TODO: commit the new derived datatype 
+    mpiret = MPI_Type_commit(&indextype);
+    if (mpiret != MPI_SUCCESS) {
+        printf("Index type commit failed!");
+    }
+
 
     /* ===================================================================== */
 
