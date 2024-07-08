@@ -3,7 +3,7 @@
 #define SIZE 4
 
 int main(int argc, char *argv[])  {
-    int numtasks, rank, source=0, dest, tag=1, i;
+    int numtasks, rank, source=0, dest, tag=1, i, mpiret;
     float a[SIZE][SIZE] = 
         {1.0, 2.0, 3.0, 4.0,  
         5.0, 6.0, 7.0, 8.0, 
@@ -45,8 +45,18 @@ int main(int argc, char *argv[])  {
      *          new datatype (handle)
      */
     // TODO: create the vector data type
+    mpiret = MPI_Type_vector(4, 1, 4, MPI_FLOAT, &columntype);
+    if (mpiret != MPI_SUCCESS) {
+        printf("Vector type creation failed!");
+        return mpiret;
+    }
 
-    // TODO: commit the new derived datatype
+    // TODO: commit the new derived datatype 
+    mpiret = MPI_Type_commit(&columntype);
+    if (mpiret != MPI_SUCCESS) {
+        printf("Vector type commit failed!");
+        return mpiret;
+    }
 
     /* ===================================================================== */
 
@@ -82,7 +92,18 @@ int main(int argc, char *argv[])  {
               */
             for (i=0; i<numtasks; i++) {
                 // TODO: send each COLUMN i of the array 'a' using the derived data type.
-                
+                mpiret = MPI_Send(
+                    &a[0][i],
+                    1,
+                    columntype,
+                    i,
+                    tag,
+                    MPI_COMM_WORLD
+                );
+                if (mpiret != MPI_SUCCESS) {
+                    printf("MPI_Send of vector failed!");
+                    return mpiret;
+                }
             }
             /* =================================================================== */
         }
