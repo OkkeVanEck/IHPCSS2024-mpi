@@ -31,29 +31,29 @@ int main(int argc, char *argv[]){
     //Hardcoding the edges: 0<->2, 1<->3
     if (rank == 0) {
 	// TODO: fill in destinations of node 0
-        dest[0] = //TODO;
-        dest[1] = //TODO;
+        dest[0] = 2; //TODO
+        dest[1] = 2; //TODO
         degree[0] = 1;
         degree[1] = 1;
     } else
     if (rank == 1) {
 	// TODO: fill in destinations of node 1
-        dest[0] = //TODO;
-        dest[1] = //TODO;
+        dest[0] = 3; //TODO
+        dest[1] = 3; //TODO
         degree[0] = 1;
         degree[1] = 1;
     } else
     if (rank == 2) {
 	// TODO: fill in destinations of node 2
-        dest[0] = //TODO;
-        dest[1] = //TODO;
+        dest[0] = 0; //TODO
+        dest[1] = 0; //TODO
         degree[0] = 1;
         degree[1] = 1;
     } else
     if (rank == 3) {
 	// TODO: fill in destinations of node 3
-        dest[0] = //TODO;
-        dest[1] = //TODO;
+        dest[0] = 1; //TODO
+        dest[1] = 1; //TODO
         degree[0] = 1;
         degree[1] = 1;
     }
@@ -91,8 +91,28 @@ int main(int argc, char *argv[]){
      */
     MPI_Comm graph_comm;
     // TODO: create the distributed graph communicator (graph_comm)
-    
+    int mpiret = MPI_Dist_graph_create(
+        MPI_COMM_WORLD,
+        2,
+        source,
+        degree,
+        dest,
+        weight,
+        MPI_INFO_NULL,
+        true,
+        &graph_comm
+    );
+    if (mpiret != MPI_SUCCESS) {
+        printf("MPI_Dist_graph_create failed!");
+        return mpiret;
+    }
+
     // TODO: get the new rank ID (rankG) in the new communicator
+    mpiret = MPI_Comm_rank(graph_comm, &rankG);
+    if (mpiret != MPI_SUCCESS) {
+        printf("MPI_Comm_rank failed!");
+        return mpiret;
+    }
     
     /* ===================================================================== */
 
