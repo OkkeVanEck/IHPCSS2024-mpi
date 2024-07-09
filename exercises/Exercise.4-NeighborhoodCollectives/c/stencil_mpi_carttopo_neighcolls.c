@@ -129,14 +129,17 @@ int main(int argc, char **argv) {
      *            communication request (handle)
      */
     // TODO: fillout 'counts' array: how much elements of data are we sending to each neighbor (hint: look at the packing of sbuf above)
-    int counts[4] = {//TODO, //TODO, //TODO, //TODO};
+    int counts[4] = {by, by, bx, bx};
     // TODO: fillout 'displs' array: What are the starting indexes of each "chunk" (hint: look at the packing of sbuf above)
-    int displs[4] = {//TODO, //TODO, //TODO, //TODO};
+    int displs[4] = {0, bx, 2*bx, 3*bx};
 
     MPI_Request req;
     MPI_Status status;
     // TODO: perform nonblocking neighborhood collective call (note: counts serves for both sendcounts and recvcounts; displs serves for both sdispls and rdispls)
-    
+    int mpiret = MPI_Ineighbor_alltoallv(sbuf, counts, displs, MPI_DOUBLE,
+                                         rbuf, counts, displs, MPI_DOUBLE,
+                                         topocomm, &req);
+
     MPI_Wait(&req, &status);
     /* ===================================================================== */
 
